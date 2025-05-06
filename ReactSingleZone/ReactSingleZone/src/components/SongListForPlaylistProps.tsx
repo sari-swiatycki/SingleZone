@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, Checkbox, FormControlLabel, List, ListItem } from "@mui/material";
 import SearchBar from './SearchBar';
 import { RootStore, AppDispatch } from "../Stores/songStore"; // ייבוא AppDispatch
-import { addSongToPlaylist, fetchPlaylistSongs } from "../Slices/playlistSlice";
+import { addSongToPlaylist } from "../Slices/playlistSlice";
 
 interface SongListForPlaylistProps {
   playlistId: number;

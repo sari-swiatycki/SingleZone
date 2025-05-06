@@ -6,18 +6,18 @@ import { RootStore } from '../Stores/songStore';
 
 const API_URL = 'http://localhost:5120';
 
-interface Song {
-  Id: number;
-  Title: string;
-  Artist: string;
-}
+// interface Song {
+//   Id: number;
+//   Title: string;
+//   Artist: string;
+// }
 
-interface SongState {
-  categories: Category[];
-  songs: Song[];
-  loading: boolean;
-  error: string | null;
-}
+// interface SongState {
+//   categories: Category[];
+//   songs: Song[];
+//   loading: boolean;
+//   error: string | null;
+// }
 
 // קריאת API להורדת קטגוריות
 export const fetchCategories = createAsyncThunk<Category[]>(
