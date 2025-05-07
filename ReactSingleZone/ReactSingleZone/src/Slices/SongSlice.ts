@@ -4,7 +4,7 @@ import Category from '../types/Category';
 import category from '../types/Category';
 import { RootStore } from '../Stores/songStore';
 
-const API_URL = 'http://localhost:5120';
+
 
 // interface Song {
 //   Id: number;
@@ -20,10 +20,12 @@ const API_URL = 'http://localhost:5120';
 // }
 
 // קריאת API להורדת קטגוריות
+
+const baseURL= import.meta.env.VITE_API_URL
 export const fetchCategories = createAsyncThunk<Category[]>(
   'songs/fetchCategories',
   async () => {
-    const response = await axios.get(`${API_URL}/categories`); // שינוי ל-axios.get
+    const response = await axios.get(`${baseURL}/categories`); // שינוי ל-axios.get
     return response.data; // axios מחזיר את הנתונים בתוך response.data
   }
 );

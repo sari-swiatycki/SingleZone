@@ -81,9 +81,12 @@ const initialState: MusicState = {
     error: null,
 };
 
+
+const baseURL= import.meta.env.VITE_API_URL
+
 // פעולה אסינכרונית לשליפת שירים
 export const fetchSongs = createAsyncThunk<Song[]>('music/fetchSongs', async () => {
-    const response = await axios.get('http://localhost:5000/api/songs');
+    const response = await axios.get(`${baseURL}songs`);
     return response.data;
 });
 

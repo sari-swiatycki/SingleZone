@@ -15,13 +15,15 @@ interface LoginData {
   password: string;
 }
 
+
+const baseURL= import.meta.env.VITE_API_URL
 // פעולה אסינכרונית לשליחת הנתונים לשרת (Register)
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async (userData: UserData, { rejectWithValue }) => {  
     try {
       console.log("userData", userData);      
-      const response = await axios.post('http://localhost:5120/api/Auth/register', userData, {
+      const response = await axios.post(`${baseURL}/Auth/login`, userData, {
         headers: {
           'Content-Type': 'application/json',
         }
@@ -43,8 +45,8 @@ export const loginUser = createAsyncThunk(
   async (loginData: LoginData, { rejectWithValue }) => {  
     try {
       console.log("loginData", loginData);
-      
-      const response = await axios.post('http://localhost:5120/api/Auth/login', loginData, {
+    
+      const response = await axios.post(`${baseURL}/Auth/login`, loginData, {
         headers: {
           'Content-Type': 'application/json',
         }
