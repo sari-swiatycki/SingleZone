@@ -3,7 +3,7 @@ import axios from 'axios';  // הוספתי את הייבוא של axios
 import Category from '../types/Category';
 import category from '../types/Category';
 import { RootStore } from '../Stores/songStore';
-import api from '../components/api';
+// import api from '../components/api';
 
 
 
