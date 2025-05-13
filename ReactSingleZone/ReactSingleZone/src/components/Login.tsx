@@ -76,3 +76,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, handleClose }) => {
 };
 
 export default LoginModal;
+
+
+
+
+
+
+

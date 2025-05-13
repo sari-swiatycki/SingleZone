@@ -8,9 +8,12 @@ namespace SingleZone.Core.Interfaces.ServiceInterface
 
         List<SongDto> GetList();         // מחזיר את כל רשימת השירים ב-DTO
         SongDto GetById(int id);         // מחזיר שיר לפי מזהה כ-DTO
-        SongDto AddSong(SongDto songDto);  // מוסיף שיר חדש מ-DTO
-        bool Update(int id, SongDto songDto);  // מעדכן שיר קיים ב-DTO
-        bool Remove(int id);  // מסיר שיר לפי מזהה
+       Task <SongDto> AddSongAsync(SongDto songDto);  // מוסיף שיר חדש מ-DTO
+    
+
+        Task<SongDto> UpdateAsync(int id, SongDto songDto);
+        Task<bool> RemoveAsync(int id);
+        // מסיר שיר לפי מזהה
         IEnumerable<SongDto> GetSongByCategory(Categories? category = null);
         List<SongDto> SearchSongsByKeyword(string keyword);
         Task<bool> AddRatingAsync(int songId, double rating);

@@ -21,7 +21,7 @@ namespace SingleZone.Data.Repository
             return _context.PlayListList.ToList();
         }
 
-        public PlayList Add(PlayList playlist)
+        public async Task< PlayList> AddAsync(PlayList playlist)
         {
             try
             {
@@ -35,6 +35,8 @@ namespace SingleZone.Data.Repository
             }
         }
 
+       
+
         public PlayList GetById(int id)
         {
             return _context.PlayListList.FirstOrDefault(p => p.Id == id);
@@ -46,12 +48,35 @@ namespace SingleZone.Data.Repository
         {
             return _context.PlayListList.ToList().FindIndex(p => p.Id == id);
         }
+        public async Task<Songs> UpdateAsync(Songs song, int id)
+        {
 
-        public bool Update(PlayList playList, int id)
+            var existingSong = _context.SongsList.FirstOrDefault(c => c.Id == id);
+            if (existingSong == null) return null;
+
+
+            existingSong.Title = song.Title;
+            existingSong.Artist = song.Artist;
+            existingSong.Genere = song.Genere;
+            existingSong.audioUrl = song.audioUrl;
+            existingSong.Tags = existingSong.Tags;
+
+
+            try
+            {
+                _context.SaveChanges();
+                return song;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public async Task<PlayList> UpdateAsync(PlayList playList, int id)
         {
 
             var existingPlaylist = _context.PlayListList.FirstOrDefault(c => c.Id == id);
-            if (existingPlaylist == null) return false;
+            if (existingPlaylist == null) return null;
 
 
             existingPlaylist.Name = playList.Name;
@@ -63,18 +88,18 @@ namespace SingleZone.Data.Repository
             try
             {
                 _context.SaveChanges();
-                return true;
+                return playList;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
 
 
 
 
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync (int id)
         {
             var playList = _context.PlayListList.FirstOrDefault(c => c.Id == id);
             if (playList == null) return false;

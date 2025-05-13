@@ -106,22 +106,29 @@ namespace SingleZone.Service
             return null;
         }
 
-        public bool Update(int id, UserDto userDto)
+        public async Task<UserDto> UpdateAsync(int id, UserDto userDto)
         {
             var user = _repository.GetById(id);
-            if (user == null) return false;
+            if (user == null) return null;
 
             var updatedUser = _mapper.Map<Users>(userDto);
-            return _repository.Update(updatedUser, id);
+            updatedUser= await _repository.UpdateAsync(updatedUser, id);
+            return _mapper.Map<UserDto>(updatedUser);
         }
 
-        public bool Remove(int id)
+
+
+      
+
+        public async Task<bool> RemoveAsync(int id)
         {
             var user = _repository.GetById(id);
             if (user == null) return false;
 
-            return _repository.Delete(id);
+            return await _repository.DeleteAsync(id);
         }
+
+     
 
 
 

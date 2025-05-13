@@ -7,15 +7,19 @@ namespace SingleZone.Core.Interfaces
     {
         List<T> GetAll();
 
-        T  Add(T entity);
+        
+
+        Task<T> AddAsync(T entity);
 
         T GetById(int id);
 
         int GetIndexById(int id);
 
-        bool Update(T entity, int index);
+        Task<T> UpdateAsync(T entity, int index);
 
-        bool Delete(int index);
+
+        Task<bool> DeleteAsync(int index);
+        
      
     }
 }

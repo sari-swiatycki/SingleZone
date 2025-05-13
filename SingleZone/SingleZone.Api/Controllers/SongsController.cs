@@ -51,13 +51,13 @@ namespace SingleZone.Controllers
 
         // POST api/Songs
         [HttpPost]
-        public ActionResult<SongDto> Post([FromBody] SongsPostModal songPost)
+        public async Task  <ActionResult<SongDto>> Post([FromBody] SongsPostModal songPost)
         {
             if (songPost == null) return BadRequest("Invalid song data.");
 
            
             var song = _mapper.Map<SongDto>(songPost); // ממיר את ה-DTO לישות            var createdUser = _usersService.AddUser(userDto); // מקבל את המשתמש שנוסף
-            var createdSong= _songsService.AddSong(song); // מקבל את המשתמש שנוסף
+            var createdSong= await _songsService.AddSongAsync(song); // מקבל את המשתמש שנוסף
             if (createdSong == null)
             {
                 return BadRequest("Failed to create user.");
@@ -67,30 +67,36 @@ namespace SingleZone.Controllers
           
         }
 
+
+
+
+   
+
         // PUT api/Songs/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] SongsPostModal songPost)
+        public async Task<ActionResult> Put(int id, [FromBody] SongsPostModal songPost)
         {
             if (id < 0 || songPost == null) return BadRequest("Invalid ID or song data.");
 
             var song = _mapper.Map<SongDto>(songPost); // ממיר את ה-DTO לישות
-            bool success = _songsService.Update(id, song);
-            if (!success) return NotFound("Song not found.");
+            var success = await _songsService.UpdateAsync(id, song);
+            if (success == null) return NotFound("Song not found.");
 
             return Ok(success);
         }
 
         // DELETE api/Songs/5
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id < 0) return BadRequest("Invalid ID.");
 
-            bool success = _songsService.Remove(id);
+            bool success = await _songsService.RemoveAsync(id);
             if (!success) return NotFound("Song not found.");
 
             return Ok(success);
         }
+    
 
 
 

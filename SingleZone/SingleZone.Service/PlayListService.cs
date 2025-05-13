@@ -36,13 +36,13 @@ namespace SingleZone.Service
             return _mapper.Map<PlayListDto>(data);
         }
 
-        public PlayListDto AddPlayList(PlayListDto playListDto)
+        public async Task< PlayListDto> AddPlayListAsync(PlayListDto playListDto)
         {
             if (_repository.GetById(playListDto.Id) != null) return null ;
 
             var playList = _mapper.Map<PlayList>(playListDto);
 
-            playList = _repository.Add(playList);
+            playList =await _repository.AddAsync(playList);
             if (playList == null)
             {
                 return null;
@@ -50,23 +50,30 @@ namespace SingleZone.Service
             return _mapper.Map<PlayListDto>(playList);
         }
 
-        public bool Update(int id, PlayListDto playListDto)
+
+    
+
+        public async Task<PlayListDto> UpdateAsync(int id, PlayListDto playListDto)
         {
             var playList = _repository.GetById(id);
-            if (playList == null) return false;
+            if (playList == null) return null;
 
             // Map the DTO back to the entity
             var updatedPlayList = _mapper.Map<PlayList>(playListDto);
-            return _repository.Update(updatedPlayList, id);
+            updatedPlayList=await _repository.UpdateAsync(updatedPlayList, id);
+            return _mapper.Map<PlayListDto>(updatedPlayList);
         }
 
-        public bool Remove(int id)
+  
+        public async Task<bool> RemoveAsync(int id)
         {
             var playList = _repository.GetById(id);
             if (playList == null) return false;
 
-            return _repository.Delete(id);
+            return await _repository.DeleteAsync(id);
         }
+
+
 
 
         public List<PlayList> GetPlaylistsByUserId(int userId)

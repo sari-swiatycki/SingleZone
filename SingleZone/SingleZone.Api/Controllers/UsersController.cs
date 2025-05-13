@@ -66,13 +66,13 @@ namespace SingleZone.Controllers
 
         // POST api/Users
         [HttpPost]
-        public ActionResult<UserDto> Post([FromBody] UsersPostModal userPost)
+        public async Task <ActionResult<UserDto>> Post([FromBody] UsersPostModal userPost)
         {
             if (userPost == null)
                 return BadRequest("Invalid user data.");
 
             var userDto = _mapper.Map<UserDto>(userPost); // ממיר את ה-Post Model ל- DTO
-            var createdUser = _usersService.AddUserAsync(userDto, userPost.Password); // מקבל את המשתמש שנוסף
+            var createdUser =await _usersService.AddUserAsync(userDto, userPost.Password); // מקבל את המשתמש שנוסף
 
             if (createdUser == null)
             {
@@ -83,31 +83,33 @@ namespace SingleZone.Controllers
         }
 
 
+      
 
 
-   
 
 
-    // PUT api/Users/5
-            [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] UsersPostModal userPost)//postmodal
+
+
+        // PUT api/Users/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] UsersPostModal userPost)//postmodal
         {
             if (id < 0 || userPost == null) return BadRequest("Invalid ID or user data.");
 
             var user = _mapper.Map<UserDto>(userPost); // ממיר את ה-DTO לישות
-            bool success = _usersService.Update(id, user);
-            if (!success) return NotFound("User not found.");
+            var success =await _usersService.UpdateAsync(id, user);
+            if (success==null) return NotFound("User not found.");
 
             return Ok(success);
         }
 
         // DELETE api/Users/5
         [HttpDelete("{id}")]//
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id < 0) return BadRequest("Invalid ID.");
 
-            bool success = _usersService.Remove(id);
+            bool success =await _usersService.RemoveAsync(id);
             if (!success) return NotFound("User not found.");
 
             return Ok(success);

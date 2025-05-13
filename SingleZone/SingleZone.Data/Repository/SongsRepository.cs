@@ -23,7 +23,7 @@ namespace SingleZone.Data.Repository
             return _context.SongsList.ToList();
         }
 
-        public Songs Add(Songs song)
+        public async Task<Songs> AddAsync(Songs song)
         {
             try
             {
@@ -36,6 +36,10 @@ namespace SingleZone.Data.Repository
                 return null;
             }
         }
+
+
+
+    
 
         public Songs GetById(int id)
         {
@@ -84,11 +88,11 @@ namespace SingleZone.Data.Repository
 
 
 
-        public bool Update(Songs song, int id)
+        public async Task<Songs> UpdateAsync(Songs song, int id)
         {
 
             var existingSong = _context.SongsList.FirstOrDefault(c => c.Id == id);
-            if (existingSong == null) return false;
+            if (existingSong == null) return null;
 
 
             existingSong.Title = song.Title;
@@ -97,20 +101,21 @@ namespace SingleZone.Data.Repository
             existingSong.audioUrl = song.audioUrl;
             existingSong.Tags = existingSong.Tags;
 
-
+            
             try
             {
                 _context.SaveChanges();
-                return true;
+                return song;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
 
 
-        public bool Delete(int id)
+
+        public async Task<bool> DeleteAsync(int id)
         {
             var song = _context.SongsList.FirstOrDefault(c => c.Id == id);
             if (song == null) return false;
@@ -127,6 +132,8 @@ namespace SingleZone.Data.Repository
             }
 
         }
+
+       
         //public bool Delete(int index)
         //{
         //    try

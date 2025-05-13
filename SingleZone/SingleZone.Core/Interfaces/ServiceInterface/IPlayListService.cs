@@ -7,11 +7,12 @@ namespace SingleZone.Core.Interfaces.ServiceInterface
     {
         List<PlayListDto> GetList();         // מחזיר את כל רשימת הפלייליסטים ב-DTO
         PlayListDto GetById(int id);         // מחזיר פלייליסט לפי מזהה כ-DTO
-        public PlayListDto AddPlayList(PlayListDto playListDto);
+        Task< PlayListDto> AddPlayListAsync(PlayListDto playListDto);
+       
 
+        Task<PlayListDto> UpdateAsync(int id, PlayListDto playListDto);
 
-        bool Update(int id, PlayListDto playListDto);  // מעדכן פלייליסט קיים ב-DTO
-        bool Remove(int id);  // מסיר פלייליסט לפי מזהה
+        Task<bool> RemoveAsync(int id); // מסיר פלייליסט לפי מזהה
         List<PlayList> GetPlaylistsByUserId(int userId);
     }
 }

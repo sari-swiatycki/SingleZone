@@ -23,7 +23,7 @@ export const registerUser = createAsyncThunk(
   async (userData: UserData, { rejectWithValue }) => {  
     try {
       console.log("userData", userData);      
-      const response = await axios.post(`http://localhost:5120/api/Auth/login`, userData, {
+      const response = await axios.post(`http://localhost:5120/api/Auth/register`, userData, {
         headers: {
           'Content-Type': 'application/json',
         }

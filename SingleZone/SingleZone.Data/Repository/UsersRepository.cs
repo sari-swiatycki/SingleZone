@@ -156,6 +156,8 @@ namespace SingleZone.Data.Repository
 
         public async Task<Users> AddAsync(Users user)
         {
+            Console.WriteLine( "--------------------------------------------");
+            Console.WriteLine(user.UserName+"xdcfgvbhjnmk,l");
             try
             {
                 _context.UsersList.Add(user);
@@ -180,10 +182,10 @@ namespace SingleZone.Data.Repository
             return _context.UsersList.ToList().FindIndex(u => u.Id == id);
         }
 
-        public bool Update(Users user, int id)
+        public async Task<Users> UpdateAsync(Users user, int id)
         {
             var existingUser = _context.UsersList.FirstOrDefault(c => c.Id == id);
-            if (existingUser == null) return false;
+            if (existingUser == null) return null;
 
             existingUser.UserName = user.UserName;
             existingUser.Password = user.Password;
@@ -192,15 +194,14 @@ namespace SingleZone.Data.Repository
             try
             {
                 _context.SaveChanges();
-                return true;
+                return user;
             }
             catch
             {
-                return false;
+                return null;
             }
         }
-
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var category = _context.UsersList.FirstOrDefault(c => c.Id == id);
             if (category == null) return false;
@@ -216,6 +217,8 @@ namespace SingleZone.Data.Repository
                 return false;
             }
         }
+
+     
 
         // מימוש המתודה של IUserRepository
         public async Task<Users> FindByUsernameAsync(string username, string password)

@@ -9,9 +9,10 @@ namespace SingleZone.Core.Interfaces.ServiceInterface
         UserDto GetById(int id);         // מחזיר משתמש לפי מזהה כ-DTO
         //public UserDto AddUser(UserDto userDto);
         Task<UserDto> AddUserAsync(UserDto user, string password);
-        bool Update(int id, UserDto userDto);  // מעדכן משתמש קיים ב-DTO
-        bool Remove(int id);  // מסיר משתמש לפי מזהה
-
+        
+        Task<UserDto> UpdateAsync(int id, UserDto userDto);
+      
+        Task<bool> RemoveAsync(int id);
         public Task<string> AuthenticateAsync(string username, string password);
         Task<UserDto> GetUserByEmailAsync(string email);
         Task<UserDto> FindByUsernameAsync(string email, string password);

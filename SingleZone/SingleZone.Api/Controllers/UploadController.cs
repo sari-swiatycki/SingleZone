@@ -416,7 +416,7 @@ namespace SingleZone.API.Controllers
                 // קריאת תגי ID3 ונתוני תמונה מהקובץ ב-S3
                 songDto.pictureUrl = await GetSongImageData(songDto.AudioUrl);
                 Console.WriteLine("sdertfyguhijko,lp.asdxfcgvhjnkhnbgtfrdtfg;dertfgyhu" + songDto.pictureUrl);
-                var addedSong = _songsService.AddSong(songDto);
+                var addedSong = _songsService.AddSongAsync(songDto);
                 if (addedSong == null)
                 {
                     return BadRequest("Failed to save song");

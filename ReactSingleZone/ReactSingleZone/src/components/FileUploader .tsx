@@ -682,11 +682,12 @@
 
 
 
+"use client"
 
-
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { useDispatch, useSelector } from 'react-redux';
+import type React from "react"
+import { useState, useRef, useEffect } from "react"
+import axios from "axios"
+import { useDispatch, useSelector } from "react-redux"
 import {
   Box,
   Button,
@@ -706,49 +707,48 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import AudiotrackIcon from '@mui/icons-material/Audiotrack';
-import LibraryMusicIcon from '@mui/icons-material/LibraryMusic';
-import CategoryIcon from '@mui/icons-material/Category';
+  InputLabel,
+} from "@mui/material"
+import { styled } from "@mui/material/styles"
+import CloudUploadIcon from "@mui/icons-material/CloudUpload"
+import MusicNoteIcon from "@mui/icons-material/MusicNote"
+import AudiotrackIcon from "@mui/icons-material/Audiotrack"
+import LibraryMusicIcon from "@mui/icons-material/LibraryMusic"
+import CategoryIcon from "@mui/icons-material/Category"
 
-import { AppDispatch, RootStore } from '../Stores/songStore';
-import { fetchCategories, selectCategories } from '../Slices/SongSlice';
-import api from './api';
+import type { AppDispatch, RootStore } from "../Stores/songStore"
+import { fetchCategories, selectCategories } from "../Slices/SongSlice"
+import api from "./api"
 
 // Custom theme with black background and turquoise accents
 const theme = createTheme({
   palette: {
-    mode: 'dark',
-    
+    mode: "dark",
+
     primary: {
-      main: '#20B2AA', // Turquoise
+      main: "#20B2AA", // Turquoise
     },
     secondary: {
-      main: '#80CBC4', // Lighter turquoise
+      main: "#80CBC4", // Lighter turquoise
     },
     background: {
-      default: '#000000', // Pure black for page background
-      paper: '#121212', // Dark gray for components
+      default: "#000000", // Pure black for page background
+      paper: "#121212", // Dark gray for components
     },
     text: {
-      primary: '#FFFFFF',
-      secondary: '#B0B0B0',
+      primary: "#FFFFFF",
+      secondary: "#B0B0B0",
     },
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
           borderRadius: 8,
-          textTransform: 'none',
+          textTransform: "none",
         },
       },
     },
@@ -756,12 +756,12 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#20B2AA',
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            borderColor: "#20B2AA",
           },
         },
         notchedOutline: {
-          borderColor: '#333333',
+          borderColor: "#333333",
         },
       },
     },
@@ -769,271 +769,325 @@ const theme = createTheme({
       styleOverrides: {
         body: {
           margin: "100px",
-          backgroundColor: '#000000',
-          scrollbarWidth: 'thin',
-          '&::-webkit-scrollbar': {
-            width: '6px',
+          backgroundColor: "#000000",
+          scrollbarWidth: "thin",
+          "&::-webkit-scrollbar": {
+            width: "6px",
           },
-          '&::-webkit-scrollbar-thumb': {
-            backgroundColor: '#20B2AA',
-            borderRadius: '3px',
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#20B2AA",
+            borderRadius: "3px",
           },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: '#121212',
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "#121212",
           },
         },
       },
     },
   },
-});
+})
 
 // Custom styled upload area
-const UploadArea = styled('div')(({ theme }) => ({
-  border: `2px dashed ${theme.palette.primary.main}`,
+const UploadArea = styled("div")(({ theme, isDragActive }: { theme: any; isDragActive?: boolean }) => ({
+  border: `2px dashed ${isDragActive ? theme.palette.secondary.main : theme.palette.primary.main}`,
   borderRadius: 8,
   padding: theme.spacing(3),
-  
-  textAlign: 'center',
-  cursor: 'pointer',
-  backgroundColor: 'rgba(32, 178, 170, 0.05)',
-  transition: 'all 0.3s ease-in-out',
-  '&:hover': {
-    backgroundColor: 'rgba(32, 178, 170, 0.1)',
-    transform: 'scale(1.01)',
+  textAlign: "center",
+  cursor: "pointer",
+  backgroundColor: isDragActive ? "rgba(32, 178, 170, 0.15)" : "rgba(32, 178, 170, 0.05)",
+  transition: "all 0.3s ease-in-out",
+  "&:hover": {
+    backgroundColor: "rgba(32, 178, 170, 0.1)",
+    transform: "scale(1.01)",
   },
-}));
-
-// // Available genres
-// const GENRES = [
-//   'Pop',
-//   'Rock',
-//   'Hip Hop',
-//   'R&B',
-//   'Electronic',
-//   'Jazz',
-//   'Classical',
-//   'Reggae',
-//   'Country',
-//   'Folk',
-//   'Metal',
-//   'Blues',
-//   'Other'
-// ];
+}))
 
 const FileUploader: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
-  
-  // שליפת הקטגוריות מהסטור של רידקס
-  const songsState = useSelector((state: RootStore) => selectCategories(state));
-  const { categories, loading, error: categoriesError } = songsState;
+  const dispatch = useDispatch<AppDispatch>()
+
+  // Fetch categories from Redux store
+  const songsState = useSelector((state: RootStore) => selectCategories(state))
+  const { categories, loading, error: categoriesError } = songsState
 
   // Form states
-  const [file, setFile] = useState<File | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [title, setTitle] = useState<string>('');
-  const [artist, setArtist] = useState<string>('');
-  const [genere, setGenere] = useState<string>('');
-  const [tags, setTags] = useState<string>('');
-  const [category, setCategory] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const [file, setFile] = useState<File | null>(null)
+  const [progress, setProgress] = useState(0)
+  const [title, setTitle] = useState<string>("")
+  const [artist, setArtist] = useState<string>("")
+  const [genere, setGenere] = useState<string>("")
+  const [tags, setTags] = useState<string>("")
+  const [category, setCategory] = useState<number>(0)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isDragActive, setIsDragActive] = useState<boolean>(false)
 
-  // טעינת הקטגוריות בטעינת הקומפוננטה
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const uploadAreaRef = useRef<HTMLDivElement>(null)
+
+  // Load categories when component mounts
   useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    dispatch(fetchCategories())
+  }, [dispatch])
 
   // Clean up URL object when component unmounts
   useEffect(() => {
     return () => {
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+        URL.revokeObjectURL(previewUrl)
       }
-    };
-  }, []);
+    }
+  }, [previewUrl])
+
+  // Set up drag and drop event listeners
+  useEffect(() => {
+    const uploadArea = uploadAreaRef.current
+
+    if (!uploadArea) return
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setIsDragActive(true)
+    }
+
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setIsDragActive(true)
+    }
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setIsDragActive(false)
+    }
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setIsDragActive(false)
+
+      if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+        const droppedFile = e.dataTransfer.files[0]
+
+        // Check if file is audio type
+        if (!droppedFile.type.startsWith("audio/")) {
+          setError("Please select a valid audio file")
+          setOpenSnackbar(true)
+          return
+        }
+
+        setFile(droppedFile)
+
+        // Create preview URL for audio
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl)
+        }
+
+        const newPreviewUrl = URL.createObjectURL(droppedFile)
+        setPreviewUrl(newPreviewUrl)
+
+        // Reset any previously set volume issues
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.volume = 1.0
+
+            // Force a reload of the audio element
+            audioRef.current.load()
+          }
+        }, 100)
+      }
+    }
+
+    uploadArea.addEventListener("dragover", handleDragOver)
+    uploadArea.addEventListener("dragenter", handleDragEnter)
+    uploadArea.addEventListener("dragleave", handleDragLeave)
+    uploadArea.addEventListener("drop", handleDrop)
+
+    return () => {
+      uploadArea.removeEventListener("dragover", handleDragOver)
+      uploadArea.removeEventListener("dragenter", handleDragEnter)
+      uploadArea.removeEventListener("dragleave", handleDragLeave)
+      uploadArea.removeEventListener("drop", handleDrop)
+    }
+  }, [previewUrl])
 
   // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      
+      const selectedFile = e.target.files[0]
+
       // Check if file is audio type
-      if (!selectedFile.type.startsWith('audio/')) {
-        setError('Please select a valid audio file');
-        setOpenSnackbar(true);
-        return;
+      if (!selectedFile.type.startsWith("audio/")) {
+        setError("Please select a valid audio file")
+        setOpenSnackbar(true)
+        return
       }
-      
-      setFile(selectedFile);
-      
+
+      setFile(selectedFile)
+
       // Create preview URL for audio
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
+        URL.revokeObjectURL(previewUrl)
       }
-      
-      const newPreviewUrl = URL.createObjectURL(selectedFile);
-      setPreviewUrl(newPreviewUrl);
-      
+
+      const newPreviewUrl = URL.createObjectURL(selectedFile)
+      setPreviewUrl(newPreviewUrl)
+
       // Reset any previously set volume issues
       setTimeout(() => {
         if (audioRef.current) {
-          audioRef.current.volume = 1.0;
-          
+          audioRef.current.volume = 1.0
+
           // Force a reload of the audio element
-          audioRef.current.load();
+          audioRef.current.load()
         }
-      }, 100);
+      }, 100)
     }
-  };
+  }
 
   // Open file selector when clicking upload area
   const handleUploadAreaClick = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click();
+      fileInputRef.current.click()
     }
-  };
+  }
 
   // Close notification
   const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
+    setOpenSnackbar(false)
+  }
 
   // Handle audio play event
   const handleAudioPlay = () => {
     // Ensure audio is played with volume
     if (audioRef.current) {
-      audioRef.current.volume = 1.0;
-      
+      audioRef.current.volume = 1.0
+
       // This is a workaround for some browsers that might require user interaction
-      const playPromise = audioRef.current.play();
-      
+      const playPromise = audioRef.current.play()
+
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             // Playback started successfully
           })
-          .catch(err => {
-            console.error("Audio playback failed:", err);
-            setError('Audio playback failed. Please try again.');
-            setOpenSnackbar(true);
-          });
+          .catch((err) => {
+            console.error("Audio playback failed:", err)
+            setError("Audio playback failed. Please try again.")
+            setOpenSnackbar(true)
+          })
       }
     }
-  };
+  }
 
   // Upload file and data to server
   const handleUpload = async () => {
     if (!file) {
-      setError('Please select a file to upload.');
-      setOpenSnackbar(true);
-      return;
+      setError("Please select a file to upload.")
+      setOpenSnackbar(true)
+      return
     }
 
     if (!category) {
-      setError('אנא בחר קטגוריה לשיר.');
-      setOpenSnackbar(true);
-      return;
+      setError("Please select a category for the song.")
+      setOpenSnackbar(true)
+      return
     }
 
-    setError(null);
-    setSuccess(null);
-    setProgress(0);
-    setIsUploading(true);
-    setOpenSnackbar(true);
+    setError(null)
+    setSuccess(null)
+    setProgress(0)
+    setIsUploading(true)
+    setOpenSnackbar(true)
 
     try {
       // Get presigned URL from server
-      const presignedResponse = await api.get('/upload/presigned-url', {
-        params: { fileName: file.name }
-      });
-      const presignedUrl = presignedResponse.data.url;
+      const presignedResponse = await api.get("/upload/presigned-url", {
+        params: { fileName: file.name },
+      })
+      const presignedUrl = presignedResponse.data.url
 
       // Upload file to server
       await axios.put(presignedUrl, file, {
-        headers: { 'Content-Type': file.type },
+        headers: { "Content-Type": file.type },
         onUploadProgress: (progressEvent) => {
-          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-          setProgress(percent);
+          const percent = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1))
+          setProgress(percent)
         },
-      });
+      })
       // Get download URL from server
-      const downloadResponse = await api.get(`/upload/download-url/${file.name}`);
-      const audioUrl = downloadResponse.data;
+      const downloadResponse = await api.get(`/upload/download-url/${file.name}`)
+      const audioUrl = downloadResponse.data
 
       // Save song details to server using original variable names
-      await api.post('/upload/save-song', {
-        title, 
-        artist, 
-        genere, 
-        audioUrl, 
-        tags, 
-        category
-      });
+      await api.post("/upload/save-song", {
+        title,
+        artist,
+        genere,
+        audioUrl,
+        tags,
+        category,
+      })
 
-      setSuccess('השיר הועלה בהצלחה!');
-      
+      setSuccess("Song uploaded successfully!")
+
       // Reset form
-      setTitle('');
-      setArtist('');
-      setGenere('');
-      setTags('');
-      setCategory(0);
-      setFile(null);
-      setProgress(0);
-      
+      setTitle("")
+      setArtist("")
+      setGenere("")
+      setTags("")
+      setCategory(0)
+      setFile(null)
+      setProgress(0)
+
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-        setPreviewUrl(null);
+        URL.revokeObjectURL(previewUrl)
+        setPreviewUrl(null)
       }
     } catch (err: any) {
-      setError(err.response?.data || err.message || 'העלאה נכשלה.');
+      setError(err.response?.data || err.message || "Upload failed.")
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
 
-      <Container maxWidth="md" sx={{ py: 4, minHeight: '100vh' }}>
-        <Paper 
+      <Container maxWidth="md" sx={{ py: 4, minHeight: "100vh" }}>
+        <Paper
           elevation={3}
-          sx={{ 
+          sx={{
             margin: "30px",
-            p: 4, 
-            borderRadius: 2, 
-            background: 'linear-gradient(145deg, #121212 0%, #1A1A1A 100%)',
-            border: '1px solid #333333',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+            p: 4,
+            borderRadius: 2,
+            background: "linear-gradient(145deg, #121212 0%, #1A1A1A 100%)",
+            border: "1px solid #333333",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
           }}
         >
-          <Box sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
             <MusicNoteIcon color="primary" fontSize="large" />
             <Typography variant="h4" component="h1" fontWeight="bold" color="text.primary">
-              העלה שיר חדש
+              Upload New Song
             </Typography>
           </Box>
-          
-          <Divider sx={{ mb: 4, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+          <Divider sx={{ mb: 4, borderColor: "rgba(255, 255, 255, 0.1)" }} />
 
           <Snackbar
             open={openSnackbar}
             autoHideDuration={6000}
             onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
           >
-            <Alert 
-              onClose={handleCloseSnackbar} 
-              severity={error ? 'error' : 'success'} 
-              sx={{ width: '100%' }}
-            >
+            <Alert onClose={handleCloseSnackbar} severity={error ? "error" : "success"} sx={{ width: "100%" }}>
               {error || success}
             </Alert>
           </Snackbar>
@@ -1041,69 +1095,100 @@ const FileUploader: React.FC = () => {
           <Grid container spacing={3}>
             {/* File Upload Area */}
             <Grid item xs={12}>
-              <UploadArea onClick={handleUploadAreaClick}>
+              <UploadArea ref={uploadAreaRef} onClick={handleUploadAreaClick} isDragActive={isDragActive}>
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="audio/*"
                   onChange={handleFileChange}
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                 />
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <CloudUploadIcon color="primary" sx={{ fontSize: 64, mb: 2 }} />
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                  <CloudUploadIcon
+                    color="primary"
+                    sx={{
+                      fontSize: 64,
+                      mb: 2,
+                      animation: isDragActive ? "pulse 1.5s infinite" : "none",
+                      "@keyframes pulse": {
+                        "0%": {
+                          transform: "scale(1)",
+                          opacity: 1,
+                        },
+                        "50%": {
+                          transform: "scale(1.1)",
+                          opacity: 0.8,
+                        },
+                        "100%": {
+                          transform: "scale(1)",
+                          opacity: 1,
+                        },
+                      },
+                    }}
+                  />
                   <Typography variant="h6" color="primary" gutterBottom>
-                    {file ? `נבחר: ${file.name}` : 'גרור ושחרר או לחץ כאן לבחירת קובץ שמע'}
+                    {file ? `Selected: ${file.name}` : "Drag and drop or click here to select an audio file"}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    פורמטים מורשים: MP3, WAV, FLAC, או AAC בלבד
+                    Allowed formats: MP3, WAV, FLAC, or AAC only
                   </Typography>
                 </Box>
               </UploadArea>
-              
+
               {/* Audio preview */}
               {previewUrl && (
-                <Box sx={{ mt: 2, p: 2, bgcolor: 'rgba(32, 178, 170, 0.05)', borderRadius: 2 }}>
+                <Box sx={{ mt: 2, p: 2, bgcolor: "rgba(32, 178, 170, 0.05)", borderRadius: 2 }}>
                   <Typography variant="subtitle2" color="primary" gutterBottom>
-                    תצוגה מקדימה:
+                    Preview:
                   </Typography>
-                  <audio 
+                  <audio
                     ref={audioRef}
-                    controls 
-                    src={previewUrl} 
-                    style={{ width: '100%' }} 
+                    controls
+                    src={previewUrl}
+                    style={{ width: "100%" }}
                     onPlay={handleAudioPlay}
                     preload="metadata"
                   />
-                  <Button 
-                    variant="outlined" 
-                    color="primary" 
-                    size="small" 
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    size="small"
                     onClick={() => {
                       if (audioRef.current) {
-                        audioRef.current.volume = 1.0;
-                        audioRef.current.play();
+                        audioRef.current.volume = 1.0
+                        audioRef.current.play()
                       }
                     }}
                     sx={{ mt: 1 }}
                   >
-                    נגן שמע (כפוי)
+                    Play Audio (Force)
                   </Button>
                 </Box>
               )}
-              
+
               {/* Progress bar */}
               {isUploading && (
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                  <Box sx={{ width: '100%', mr: 1 }}>
-                    <Box sx={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 1, height: 8, position: 'relative' }}>
-                      <Box sx={{ 
-                        width: `${progress}%`, 
-                        backgroundColor: theme.palette.primary.main, 
-                        position: 'absolute',
-                        height: '100%',
+                <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
+                  <Box sx={{ width: "100%", mr: 1 }}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        backgroundColor: "rgba(255,255,255,0.1)",
                         borderRadius: 1,
-                        transition: 'width 0.3s ease'
-                      }} />
+                        height: 8,
+                        position: "relative",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: `${progress}%`,
+                          backgroundColor: theme.palette.primary.main,
+                          position: "absolute",
+                          height: "100%",
+                          borderRadius: 1,
+                          transition: "width 0.3s ease",
+                        }}
+                      />
                     </Box>
                   </Box>
                   <Box sx={{ minWidth: 35 }}>
@@ -1118,7 +1203,7 @@ const FileUploader: React.FC = () => {
               <TextField
                 fullWidth
                 variant="outlined"
-                label="כותרת השיר"
+                label="Song Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 InputProps={{
@@ -1136,7 +1221,7 @@ const FileUploader: React.FC = () => {
               <TextField
                 fullWidth
                 variant="outlined"
-                label="אמן"
+                label="Artist"
                 value={artist}
                 onChange={(e) => setArtist(e.target.value)}
                 InputProps={{
@@ -1154,7 +1239,7 @@ const FileUploader: React.FC = () => {
               <TextField
                 fullWidth
                 variant="outlined"
-                label="ז'אנר"
+                label="Genre"
                 value={genere}
                 onChange={(e) => setGenere(e.target.value)}
                 InputProps={{
@@ -1170,11 +1255,11 @@ const FileUploader: React.FC = () => {
             {/* Category - Changed to Select dropdown with real categories from Redux */}
             <Grid item xs={12} md={6}>
               <FormControl fullWidth variant="outlined">
-                <InputLabel>קטגוריה</InputLabel>
+                <InputLabel>Category</InputLabel>
                 <Select
-                  value={category || ''}
+                  value={category || ""}
                   onChange={(e) => setCategory(Number(e.target.value))}
-                  label="קטגוריה"
+                  label="Category"
                   disabled={loading}
                   startAdornment={
                     <InputAdornment position="start">
@@ -1183,19 +1268,19 @@ const FileUploader: React.FC = () => {
                   }
                 >
                   <MenuItem value="" disabled>
-                    <em>בחר קטגוריה</em>
+                    <em>Select a category</em>
                   </MenuItem>
                   {loading ? (
                     <MenuItem disabled>
                       <CircularProgress size={20} />
                       <Typography variant="body2" sx={{ ml: 1 }}>
-                        טוען קטגוריות...
+                        Loading categories...
                       </Typography>
                     </MenuItem>
                   ) : categoriesError ? (
                     <MenuItem disabled>
                       <Typography variant="body2" color="error">
-                        שגיאה בטעינת קטגוריות
+                        Error loading categories
                       </Typography>
                     </MenuItem>
                   ) : (
@@ -1214,10 +1299,10 @@ const FileUploader: React.FC = () => {
               <TextField
                 fullWidth
                 variant="outlined"
-                label="תגיות"
+                label="Tags"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
-                placeholder="הכנס תגיות מופרדות בפסיקים"
+                placeholder="Enter tags separated by commas"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -1230,7 +1315,7 @@ const FileUploader: React.FC = () => {
 
             {/* Upload Button */}
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -1238,17 +1323,17 @@ const FileUploader: React.FC = () => {
                   onClick={handleUpload}
                   disabled={isUploading || loading}
                   startIcon={isUploading ? <CircularProgress size={20} color="inherit" /> : <CloudUploadIcon />}
-                  sx={{ 
-                    px: 6, 
-                    py: 1.5, 
-                    fontSize: '1rem',
-                    boxShadow: '0 4px 20px rgba(32, 178, 170, 0.3)',
-                    '&:hover': {
-                      boxShadow: '0 6px 25px rgba(32, 178, 170, 0.5)',
-                    }
+                  sx={{
+                    px: 6,
+                    py: 1.5,
+                    fontSize: "1rem",
+                    boxShadow: "0 4px 20px rgba(32, 178, 170, 0.3)",
+                    "&:hover": {
+                      boxShadow: "0 6px 25px rgba(32, 178, 170, 0.5)",
+                    },
                   }}
                 >
-                  {isUploading ? 'מעלה...' : 'העלה שיר'}
+                  {isUploading ? "Uploading..." : "Upload Song"}
                 </Button>
               </Box>
             </Grid>
@@ -1256,7 +1341,7 @@ const FileUploader: React.FC = () => {
         </Paper>
       </Container>
     </ThemeProvider>
-  );
-};
+  )
+}
 
-export default FileUploader;
+export default FileUploader

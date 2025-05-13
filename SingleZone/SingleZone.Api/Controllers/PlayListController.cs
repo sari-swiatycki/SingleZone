@@ -55,16 +55,17 @@ namespace SingleZone.Controllers
         // POST api/PlayList
         [HttpPost]
         [Authorize]
-        public ActionResult<SongDto> Post([FromBody] PlayListPostModal playListPost)
+        public  async Task< ActionResult<SongDto>> Post([FromBody] PlayListPostModal playListPost)
         {
             if (playListPost == null) return BadRequest("Invalid playlist data.");
 
             var playList = _mapper.Map<PlayListDto>(playListPost); // ממיר את ה-DTO לישות
-            var createdPlayList = _playListService.AddPlayList(playList);
+            var createdPlayList =await _playListService.AddPlayListAsync(playList);
             if (createdPlayList == null)
             {
                 return BadRequest("Failed to create user.");
             }
+          
 
 
             if (!ModelState.IsValid)
@@ -74,15 +75,19 @@ namespace SingleZone.Controllers
             return Ok(createdPlayList);
         }
 
+
+
+
+
         // PUT api/PlayList/5
         [HttpPut("{id}")]
         [Authorize]
-        public ActionResult Put(int id, [FromBody] PlayListPostModal playListPost)
+        public async Task<ActionResult> Put(int id, [FromBody] PlayListPostModal playListPost)
         {
             if (id < 0 || playListPost == null) return BadRequest("Invalid ID or playlist data.");
             var playList = _mapper.Map<PlayListDto>(playListPost); // ממיר את ה-DTO לישות
-            bool success = _playListService.Update(id, playList);
-            if (!success) return NotFound("Playlist not found.");
+            var success = await _playListService.UpdateAsync(id, playList);
+            if (success == null) return NotFound("Playlist not found.");
 
             return Ok(success);
         }
@@ -90,11 +95,11 @@ namespace SingleZone.Controllers
         // DELETE api/PlayList/5
         [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             if (id < 0) return BadRequest("Invalid ID.");
 
-            bool success = _playListService.Remove(id);
+            bool success =await _playListService.RemoveAsync(id);
             if (!success) return NotFound("Playlist not found.");
 
             return Ok(success);
