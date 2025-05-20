@@ -16,9 +16,9 @@ export class UserService {
   }
 
 
-   addUser(username:string,email:string,password:string): Observable<any> 
+   addUser(userName:string,email:string,password:string): Observable<any> 
     {     
-      return this.http.post<any>(this.apiUrl,{username,email,password});
+      return this.http.post<any>(this.apiUrl,{userName,email,password});
     }
     getUserById(id: string): Observable<any> {
   
