@@ -15,11 +15,11 @@ import FileUploader from './components/file-uploader/FileUploader';
 
 
 import SongPlayer from './components/SongPlayer';
-import HomePage from './components/home-page-folder/HomePage';
 import LoginForm from './components/login/LoginForm';
 import PersonalAreaMenu from './components/personal-area/personal-area-menu';
 import PlaylistSongs from './components/playlist/playlist-songs';
 import RegisterForm from './components/Register';
+import HomePage from './components/HomePage';
 
 
 
