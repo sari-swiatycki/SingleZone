@@ -17,9 +17,10 @@ import FileUploader from './components/file-uploader/FileUploader';
 import SongPlayer from './components/SongPlayer';
 import LoginForm from './components/login/LoginForm';
 import PersonalAreaMenu from './components/personal-area/personal-area-menu';
-import PlaylistSongs from './components/playlist/playlist-songs';
+
 import RegisterForm from './components/Register';
 import HomePage from './components/HomePage';
+import PlaylistSongs from './components/PlaylistSongsProps';
 
 
 
