@@ -5,16 +5,25 @@ import PersonalArea from './components/PersonalArea';
 import ProfileUpdate from './components/ProfileUpdate';
 
 import Playlists from './components/PersonalPlayList';
-import PlaylistSongs from './components/PlaylistSongsProps';
 
-import HomePage from './components/HomePage';
-import PersonalAreaMenu from './components/PersonalAreaMenu';
+
+
+
 import Layout from './components/Layout';
-import LoginForm from './components/Login';
+
 import FileUploader from './components/file-uploader/FileUploader';
-// import SongPlayer from './components/song-player/SongPlayer';
-import RegisterForm from './components/register-form/RegisterForm';
+
+
 import SongPlayer from './components/SongPlayer';
+import HomePage from './components/home-page-folder/HomePage';
+import LoginForm from './components/login/LoginForm';
+import PersonalAreaMenu from './components/personal-area/personal-area-menu';
+import PlaylistSongs from './components/playlist/playlist-songs';
+import RegisterForm from './components/Register';
+
+
+
+
 
 
 export const Router = createBrowserRouter([
@@ -32,8 +41,6 @@ export const Router = createBrowserRouter([
   
       
       {path: '//HomePage',element: <HomePage/>},
-     
-
       { index: true, element:  <HomePage/>},
       {path: '//:id',element: <SongPlayer/>},
       

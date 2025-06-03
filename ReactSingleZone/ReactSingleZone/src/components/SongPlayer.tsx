@@ -1568,11 +1568,14 @@ const SongPlayer: React.FC = () => {
       sx={{
         display: "flex",
         flexDirection: isMobile ? "column" : "row",
-        height: "100vh",
+        // height: "100vh",
         width: "100%",
-        overflow: "hidden",
+        // overflow: "hidden",
         bgcolor: COLORS.background,
         backgroundImage: "radial-gradient(circle at 10% 20%, rgba(0, 188, 212, 0.05) 0%, rgba(0, 0, 0, 0) 80%)",
+        minHeight: "100vh",
+        overflow: "auto",
+        paddingBottom: "120px", // גובה הפוטר + רווח
       }}
     >
       {/* Left side - Lyrics */}

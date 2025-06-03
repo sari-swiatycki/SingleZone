@@ -1,10 +1,12 @@
 "use client"
-
 import type React from "react"
 import { Box, Typography } from "@mui/material"
-import { CheckCircle, Star } from "lucide-react"
-import type { SuccessViewProps } from "./types"
-import { MODAL_STYLES } from "./constants"
+import StarIcon from "@mui/icons-material/Star"
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+
+interface SuccessViewProps {
+  rating: number
+}
 
 const SuccessView: React.FC<SuccessViewProps> = ({ rating }) => {
   return (
@@ -15,7 +17,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ rating }) => {
         flexDirection: "column",
         alignItems: "center",
         textAlign: "center",
-        ...MODAL_STYLES.gradientBackground,
+        background: "linear-gradient(to bottom, #0f0f0f, #001620)",
       }}
     >
       <Box
@@ -38,7 +40,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ rating }) => {
           },
         }}
       >
-        <CheckCircle size={32} />
+        <CheckCircleIcon fontSize="large" />
       </Box>
       <Typography
         variant="h5"
@@ -65,12 +67,11 @@ const SuccessView: React.FC<SuccessViewProps> = ({ rating }) => {
         <Typography sx={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.6)" }}>Your rating:</Typography>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           {[...Array(5)].map((_, i) => (
-            <Star
+            <StarIcon
               key={i}
-              size={20}
-              fill={i < rating ? "#00ccff" : "transparent"}
-              style={{
+              sx={{
                 color: i < rating ? "#00ccff" : "rgba(255,255,255,0.2)",
+                fontSize: "1.2rem",
               }}
             />
           ))}

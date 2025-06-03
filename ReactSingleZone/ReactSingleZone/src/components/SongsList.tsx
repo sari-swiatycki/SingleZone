@@ -354,9 +354,11 @@ import { useNavigate } from "react-router-dom";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import DeleteIcon from '@mui/icons-material/Delete';
-import RatingModalProps from './RatingModalProps ';
+
 import { deleteSong } from '../Slices/musiSlice';
 import { AppDispatch } from "../Stores/songStore";  
+import RatingModalProps from './RatingModalProps ';
+
 
 (window as any).Buffer = Buffer;
 
